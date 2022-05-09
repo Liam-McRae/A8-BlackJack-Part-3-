@@ -1,4 +1,4 @@
-// name
+// Liam McRae
 // date
 // assignment
 // class period
@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 class BlackJack {
   
-  public static int[] play(int totalMoney) { //returns money change & win change
+  public static int[] play(int totalMoney) {          //returns money change & win change
     
     boolean playMatches = true;
     int money = totalMoney;
