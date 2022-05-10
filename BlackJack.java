@@ -1,13 +1,3 @@
-// Liam McRae
-// date
-// assignment
-// class period
-
-/*
-  Description of several sentences in length.
-  Not to wide across the screen.
-*/
-
 import java.util.Random;
 import java.util.Scanner;
 
