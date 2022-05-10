@@ -38,13 +38,14 @@ public class SaveLoad {
       String UUID = scan.next();
       int money = scan.nextInt();
       String name = scan.next();
+      int wins = scan.nextInt();
       
       Player[] newOut = new Player[output.length + 1];
       for(int i = 0; i < output.length; i++) {
         newOut[i] = output[i];
       }
       
-      newOut[newOut.length - 1] = new Player(name, money, UUID);
+      newOut[newOut.length - 1] = new Player(name, money, UUID, wins);
       output = newOut;
     }
     scan.close();
@@ -52,6 +53,8 @@ public class SaveLoad {
 
     return output;
   }
+
+  
 
   public Player getPlayerUUID(String UUID){
     Player output = null;
@@ -83,21 +86,28 @@ public class SaveLoad {
   }
 
 
+
+  
+  public boolean update(String name, Player player) {
+    for(int i = 0; i < players.length; i++) {
+      if(players[i].name().equals(name)) {
+        players[i] = player;
+        return true;
+      }
+    }
+    return false;
+  }
+  
+
+  
+
   // returns every loaded player
   public Player[] getPlayers() {
     return players;
   }
 
-
-  // adds a player to the players array. Does not save the new player to the playerdata file
-  public void addPlayerToList(Player player){
-    Player[] newArray = new Player[players.length + 1];
-    for(int i = 0; i < players.length; i++){
-      newArray[i] = players[i];
-    }
-    newArray[newArray.length - 1] = player;
-    
-    players = newArray;
+  public void setPlayers(Player[] players) {
+    this.players = players;
   }
 
 
@@ -105,7 +115,7 @@ public class SaveLoad {
   public void save() throws FileNotFoundException{
     PrintStream ps = new PrintStream(file);
     for(int i = 0; i < players.length; i++) {
-      ps.println(players[i].id() + " " + players[i].cash() + " " + players[i].name());
+      ps.println(players[i].id() + " " + players[i].cash() + " " + players[i].name() + " " + players[i].wins());
     }
     ps.close();
   }

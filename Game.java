@@ -4,83 +4,91 @@ import java.io.FileNotFoundException;
 public class Game{
 
   public static Player player;
-  public static SaveLoad sv;
-  public static String instaDebug = "BJ";
+  private static SaveLoad sv;
+  public static final String instaDebug = "";
   
   public static void main(String[] args) throws FileNotFoundException{
-
-    /*
-    int[] s = {13, 1, 2, 8, 3, 6, 1, 12};
-    CardList cl = new CardList(s);
-    cl.shuffle();
-    System.out.println(cl.display(true, 1));
-    System.out.println("best: " + cl.bestPoints());
-    */
-
+    
+    // instadebug allows games to be played immediatly, skipping the log in process
     if(instaDebug.equals("")) {
       play();
     } else {
       player = new Player("debug", 100);
       launch(instaDebug);
     }
-    
-  }
-
-  public static void play() throws FileNotFoundException{
-    
-    Scanner scan = new Scanner(System.in);
-    sv = new SaveLoad("PlayerData.csv");
-    
-    logIn(scan);
-    
-    System.out.println("<<<Select a Game>>>");
-
-    while(true){
-      System.out.println("1) BlackJack");
-      String input = scan.nextLine();
-      System.out.println();
-      if(input.charAt(0) == '1'){
-        launch("BJ");
-        break;
-      } else {
-        System.out.println("\"" + input + "\" is not a valid option.");
-      }
-      
-    }
-    
-  }
-
-
-
-  public static void launch(String gameName) {
-    while(true) {
-      if(gameName.equals("BJ")){
-        player.matchSet(BlackJack.play(player.cash()));
-      }
-
-      boolean playMatches = true;
-      Scanner scan = new Scanner(System.in);
-      while(true){
-          System.out.print("Would you like to play again? y/n: ");
-          String input = scan.next();
-          
-          if(input.charAt(0) == 'y'){
-            break;
-          } else if(input.charAt(0) == 'n') {
-            playMatches = false;
-            break;
-          } else {
-            System.out.println("Please choose \"y\" or \"n\".");
-          }
-        }
-        System.out.println();
-
-      }
   }
 
   
 
-  public static void logIn(Scanner scan){
+  // calls all of the big methods
+  public static void play() throws FileNotFoundException{
+    Scanner scan = new Scanner(System.in);
+    sv = new SaveLoad("PlayerData.csv");
+    
+    logIn(scan); // assign player   
+    selection(); // begin gameplay
+  }
+
+
+
+  // saves player data. Although this doesn't need to be a method because it is only used once here, the other classes for games need to be able to themselves save, in order to prevent save-scumming
+  public static void savePlayer(int[] moneyWins) throws FileNotFoundException{
+    player.matchSet(moneyWins);
+    sv.update(player.name(), player);
+    sv.save();
+  }
+  
+
+
+  // game loop, allows games to be played
+  public static void selection() throws FileNotFoundException{
+    Scanner scan = new Scanner(System.in);
+    
+    while(true){
+
+      System.out.println("<<<Select a Game>>>");
+      System.out.println("1) BlackJack");
+      System.out.println("2) ");
+      System.out.println("3) Quit");
+      System.out.println("4) ");
+      System.out.println("5) ");
+      System.out.println("6) ");
+      
+      String input = scan.nextLine();
+      System.out.println();
+      if(input.charAt(0) == '1'){
+        launch("BJ");
+      } else if(input.charAt(0) == '2') {
+        
+      } else if(input.charAt(0) == '3') {
+        break;
+      } else if(false) {
+
+      } else if(false) {
+
+      } else if(false) {
+
+      } else {
+        System.out.println("\"" + input + "\" is not a valid option.");
+      }
+    }
+    System.out.println("Thank you for playing!");
+  }
+
+
+
+  // starts a game given an acronym for said game
+  public static void launch(String gameName) throws FileNotFoundException{
+    if(gameName.equals("BJ")){
+      savePlayer(BlackJack.play(player.cash(), player.wins()));
+    }
+    
+  }
+
+  
+
+  // sets player, allows creation of new player
+  public static void logIn(Scanner scan) throws FileNotFoundException{
 
     boolean logging = true;
     
@@ -113,9 +121,9 @@ public class Game{
       } else if(input.charAt(0) == '3') {
         while(logging) {
           System.out.print("Enter name: ");
-          player = new Player(scan.nextLine());
+          player = new Player(scan.nextLine(), 100);
 
-          // addPlayer returns false if the adding was unsuccessful. Its very rare but possible that the error is due to a duplicate id, not a duplicate name, but that is too rare for me to bother fixing it, and it doesn't even break the code. It will only make one of the UUID twins unaccessible using the UUID search
+          // addPlayer returns false if the adding was unsuccessful. Its very rare but possible that the error is due to a duplicate id, not a duplicate name, but that is too rare for me to bother fixing it, and it doesn't even break the code. It will only make one of the UUID twins inaccessible using the UUID search
           if(sv.addPlayer(player) == false) {
             System.out.println("There is already a player with that name. Please choose another.");
           } else {
@@ -123,8 +131,7 @@ public class Game{
             System.out.println();
           }
         }
-        
-        
+        sv.save();
       } else {
         System.out.println("\"" + input + "\" is not a valid option.");
         System.out.println();

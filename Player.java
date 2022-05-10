@@ -12,6 +12,13 @@ public class Player{
     this.name = name;
     this.cash = cash;
   }
+
+  public Player(String name, int cash, String id, int wins) {
+    this.id = id;
+    this.name = name;
+    this.cash = cash;
+    this.wins = wins;
+  }
   
   public Player(String name, int cash){
     id = UUID.randomUUID().toString();
@@ -44,6 +51,7 @@ public class Player{
     wins = amount;
   }
 
+  // sets all values that are likely to be changed after a match
   public void matchSet(int[] values) {
     cash = values[0];
     wins = values[1];
