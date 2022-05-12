@@ -3,11 +3,9 @@ import java.io.FileNotFoundException;
 
 class BlackJack {
   
-  public static int[] play(int totalMoney, int totalWins) throws FileNotFoundException{          //returns money change & win change
+  public static Player play(Player player) throws FileNotFoundException{   //returns money change & win change
     
-    int money = totalMoney;
-    int wins = totalWins;
-    int[] returnArr = new int[2];
+    int money = player.cash();
     Scanner scan = new Scanner(System.in);
 
     CardList deck = new CardList();
@@ -26,10 +24,11 @@ class BlackJack {
     }
     bet = input2;
     money -= bet;
-    returnArr[0] = money;
-    returnArr[1] = wins;
+    
     //quicksave player money to prevent save-scumming
-    Game.savePlayer(returnArr);
+    player.setMoney(money);
+    Game.savePlayer(player);
+    
     System.out.println();
 
     // find naturals and inform player of cards
@@ -58,7 +57,7 @@ class BlackJack {
       } else {
         matchOver = true;
         System.out.println("You are a winner! 2 times your bet is given.");
-        wins++;
+        player.addWins(new int[]{1, 0, 0, 0});
         money += bet * 2;
         System.out.println();
       }
@@ -68,7 +67,7 @@ class BlackJack {
         matchOver = true;
         bet = 0;
         System.out.println("The dealer has a natural. Your bet has been forfeited.");
-        wins--;
+        player.addWins(new int[]{0, 1, 0, 0});
         System.out.println();
       }
     }
@@ -109,7 +108,7 @@ class BlackJack {
   
           if(hand.bestPoints() > 21){
             System.out.println("You have gone bust. Your bet has been forfeited.");
-            wins--;
+            player.addWins(new int[]{0, 1, 0, 0});
             matchOver = true;
             System.out.println();
             break;
@@ -142,15 +141,15 @@ class BlackJack {
       }
       if(dealerHand.bestPoints() > 21){
         System.out.println("The dealer has gone bust. 2 times your bet has been paid.");
-        wins++;
+        player.addWins(new int[]{1, 0, 0, 0});
         money += 2 * bet;
       } else if(dealerHand.bestPoints() > hand.bestPoints()) {
         System.out.println("The dealer has more points than you. Your bet has been collected.");
-        wins--;
+        player.addWins(new int[]{0, 1, 0, 0});
       } else if(dealerHand.bestPoints() < hand.bestPoints()) {
         System.out.println("The dealer has less points than you. 2 times your bet has been paid.");
         money += 2 * bet;
-        wins++;
+        player.addWins(new int[]{1, 0, 0, 0});
       } else {
         System.out.println("It is a standoff. Your bet has been paid.");
         money += bet;
@@ -159,10 +158,10 @@ class BlackJack {
     System.out.println();
     System.out.println("You now have $" + money + ".");
     System.out.println();
+    player.setMoney(money);
 
-    returnArr[0] = money; returnArr[1] = wins;
     scan.close();
-    return returnArr;
+    return player;
     
   }
   //display cards

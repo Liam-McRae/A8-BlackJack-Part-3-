@@ -25,15 +25,15 @@ public class Game{
     Scanner scan = new Scanner(System.in);
     sv = new SaveLoad("PlayerData.csv");
     
-    logIn(scan); // assign player   
+    player = logIn(scan); // assign player   
     selection(); // begin gameplay
   }
 
 
 
   // saves player data. Although this doesn't need to be a method because it is only used once here, the other classes for games need to be able to themselves save, in order to prevent save-scumming
-  public static void savePlayer(int[] moneyWins) throws FileNotFoundException{
-    player.matchSet(moneyWins);
+  public static void savePlayer(Player returnPlayer) throws FileNotFoundException{
+    player = returnPlayer;
     sv.update(player.name(), player);
     sv.save();
   }
@@ -47,15 +47,15 @@ public class Game{
     while(true){
 
       System.out.println("<<<Select a Game>>>");
-      System.out.println("1) BlackJack");
-      System.out.println("2) ");
+      System.out.println("1) BlackJack (1 person)");
+      System.out.println("2) Uno (1-4 people)");
       System.out.println("3) Quit");
       System.out.println("4) ");
       System.out.println("5) ");
       System.out.println("6) ");
-      
-      String input = scan.nextLine();
       System.out.println();
+      String input = scan.nextLine();
+
       if(input.charAt(0) == '1'){
         launch("BJ");
       } else if(input.charAt(0) == '2') {
@@ -72,6 +72,7 @@ public class Game{
         System.out.println("\"" + input + "\" is not a valid option.");
       }
     }
+    scan.close();
     System.out.println("Thank you for playing!");
   }
 
@@ -80,19 +81,32 @@ public class Game{
   // starts a game given an acronym for said game
   public static void launch(String gameName) throws FileNotFoundException{
     if(gameName.equals("BJ")){
-      savePlayer(BlackJack.play(player.cash(), player.wins()));
+      savePlayer(BlackJack.play(player));
     }
+    if(gameName.equals("UNO")) {
+      Scanner scan = new Scanner(System.in);
+      System.out.println("Num of players: ");
+      int playerNum = scan.nextInt();
+      System.out.println();
+      Player[] players = new Player[playerNum];
+      for(int i = 0; i < playerNum; i++) {
+        players[i] = logIn(scan);
+      }
     
+      Player[] data = Uno.play(players);
+      
+    }
   }
 
   
 
   // sets player, allows creation of new player
-  public static void logIn(Scanner scan) throws FileNotFoundException{
+  public static Player logIn(Scanner scan) throws FileNotFoundException{
 
     boolean logging = true;
     
     System.out.println("<<< Log in >>>");
+    Player tempPlayer = null;
     while(logging) {
       System.out.println("1) Select profile from username");
       System.out.println("2) Select profile from UUID");
@@ -100,13 +114,14 @@ public class Game{
   
       String input = scan.nextLine();
       
+      
       // gets player via username
       if(input.charAt(0) == '1') {
         
         System.out.print("Enter username: ");
         input = scan.nextLine();
         System.out.println();
-        player = sv.getPlayer(input);
+        tempPlayer = sv.getPlayer(input);
         
 
       // gets player via UUID
@@ -114,17 +129,17 @@ public class Game{
         System.out.print("Enter UUID: ");
         input = scan.nextLine();
         System.out.println();
-        player = sv.getPlayerUUID(input);
+        tempPlayer = sv.getPlayerUUID(input);
 
 
       // creates new player with $100 and random UUID
       } else if(input.charAt(0) == '3') {
         while(logging) {
           System.out.print("Enter name: ");
-          player = new Player(scan.nextLine(), 100);
+          tempPlayer = new Player(scan.nextLine(), 100);
 
           // addPlayer returns false if the adding was unsuccessful. Its very rare but possible that the error is due to a duplicate id, not a duplicate name, but that is too rare for me to bother fixing it, and it doesn't even break the code. It will only make one of the UUID twins inaccessible using the UUID search
-          if(sv.addPlayer(player) == false) {
+          if(sv.addPlayer(tempPlayer) == false) {
             System.out.println("There is already a player with that name. Please choose another.");
           } else {
             logging = false;
@@ -137,15 +152,16 @@ public class Game{
         System.out.println();
       }
 
-      if(player == null){
+      if(tempPlayer == null){
         System.out.println("That player could not be found.");
         System.out.println();
       } else {
         logging = false;
-        System.out.println("You have selected " + player.name() + " with $" + player.cash() + ".");
+        System.out.println("You have selected " + tempPlayer.name() + " with $" + tempPlayer.cash() + ".");
         System.out.println();
       }
     }
+    return tempPlayer;
   }
 
 }

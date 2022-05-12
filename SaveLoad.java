@@ -38,14 +38,17 @@ public class SaveLoad {
       String UUID = scan.next();
       int money = scan.nextInt();
       String name = scan.next();
-      int wins = scan.nextInt();
+      int BJWins = scan.nextInt();
+      int BJlosses = scan.nextInt();
+      int UNOWins = scan.nextInt();
+      int UNOLosses = scan.nextInt();
       
       Player[] newOut = new Player[output.length + 1];
       for(int i = 0; i < output.length; i++) {
         newOut[i] = output[i];
       }
       
-      newOut[newOut.length - 1] = new Player(name, money, UUID, wins);
+      newOut[newOut.length - 1] = new Player(name, money, UUID, new int[]{BJWins, BJlosses, UNOWins, UNOLosses});
       output = newOut;
     }
     scan.close();
@@ -115,7 +118,7 @@ public class SaveLoad {
   public void save() throws FileNotFoundException{
     PrintStream ps = new PrintStream(file);
     for(int i = 0; i < players.length; i++) {
-      ps.println(players[i].id() + " " + players[i].cash() + " " + players[i].name() + " " + players[i].wins());
+      ps.println(players[i].id() + " " + players[i].cash() + " " + players[i].name() + " " + players[i].wins()[0] + " " + players[i].wins()[1] + " " + players[i].wins()[2] + " " + players[i].wins()[3]);
     }
     ps.close();
   }

@@ -5,7 +5,10 @@ public class Player{
   private String id;
   private String name;
   private int cash;
-  private int wins;
+  private int BJWins;
+  private int BJLosses;
+  private int UNOWins;
+  private int UNOLosses;
 
   public Player(String name, int cash, String id) {
     this.id = id;
@@ -13,11 +16,14 @@ public class Player{
     this.cash = cash;
   }
 
-  public Player(String name, int cash, String id, int wins) {
+  public Player(String name, int cash, String id, int[] wins) {
     this.id = id;
     this.name = name;
     this.cash = cash;
-    this.wins = wins;
+    BJWins = wins[0];
+    BJLosses = wins[1];
+    UNOWins = wins[2];
+    UNOLosses = wins[3];
   }
   
   public Player(String name, int cash){
@@ -35,7 +41,7 @@ public class Player{
     cash = amount;
   }
   
-  public String name() {
+  public String name() { 
 	  return name;
   }
   
@@ -43,18 +49,24 @@ public class Player{
 	  return cash;
   }
 
-  public int wins() {
-    return wins;
+  public int[] wins() {
+    return new int[]{BJWins, BJLosses, UNOWins, UNOLosses};
   }
 
-  public void setWins(int amount) {
-    wins = amount;
+  public void addWins(int[] amount) {
+    BJWins += amount[0];
+    BJLosses += amount[1];
+    UNOWins += amount[2];
+    UNOLosses += amount[3];
   }
 
   // sets all values that are likely to be changed after a match
   public void matchSet(int[] values) {
     cash = values[0];
-    wins = values[1];
+    BJWins = values[0];
+    BJLosses = values[1];
+    UNOWins = values[2];
+    UNOLosses = values[3];
   }
 
   public String id() {
